@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ComicList - This Week's Checklist</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f0f0f0; }
+    input[type="checkbox"] { transform: scale(1.4); margin-right: 8px; }
+    .checked td:not(:first-child) { text-decoration: line-through; color: #666; }
+    button { padding: 8px 12px; margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>ComicList - This Week's Checklist</h1>
+  <button onclick="resetAll()">Reset All Checkboxes</button>
+  <button onclick="printChecked()">Print Checked Items</button>
+
+  <table id="checklistTable">
+    <thead>
+      <tr>
+        <th>✓</th>
+        <th>Publisher</th>
+        <th>Title</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const CSV_URL = "https://s3.us-east-1.amazonaws.com/gocollect.comiclist/checklist.csv";
+
+    async function loadChecklist() {
+      try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) throw new Error("Failed to fetch CSV");
+
+        const csvText = await response.text();
+        const rows = csvText.split('\n').map(row => row.split('|').map(cell => cell.trim()));
+
+        const tbody = document.querySelector("#checklistTable tbody");
+        tbody.innerHTML = "";
+
+        // Start from index 2 (skip header + separator line)
+        for (let i = 2; i < rows.length; i++) {
+          const cols = rows[i];
+          if (cols.length < 5 || !cols[0] || !cols[1]) continue;
+
+          const [publisher, title, , , price] = cols;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><input type="checkbox" class="item-check"></td>
+            <td>${publisher}</td>
+            <td>${title}</td>
+            <td>${price}</td>
+          `;
+
+          const checkbox = tr.querySelector("input");
+          checkbox.addEventListener("change", () => {
+            tr.classList.toggle("checked", checkbox.checked);
+          });
+
+          tbody.appendChild(tr);
+        }
+
+        console.log("✅ Checklist loaded successfully!");
+
+      } catch (err) {
+        console.error(err);
+        document.body.innerHTML += `<p style="color:red;">Error loading data. Try opening this file in a local server or upload it online.</p>`;
+      }
+    }
+
+    function resetAll() {
+      document.querySelectorAll(".item-check").forEach(cb => {
+        cb.checked = false;
+        cb.closest("tr").classList.remove("checked");
+      });
+    }
+
+    function printChecked() {
+      const checked = Array.from(document.querySelectorAll("tr.checked"))
+        .map(row => {
+          const tds = row.querySelectorAll("td");
+          return `☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})`;
+        })
+        .join("\n");
+
+      if (checked) {
+        const w = window.open();
+        w.document.write(`<pre>${checked}</pre><script>window.print()<\/script>`);
+      } else {
+        alert("No items are checked yet.");
+      }
+    }
+
+    // Load data
+    loadChecklist();
+  </script>
+
+</body>
+</html>
