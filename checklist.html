@@ -230,7 +230,7 @@
       if (checked.length === 0) return alert("No items checked.");
 
       let html = `
-        <h2 style="text-align: center;">Chuck's Comic Book Lists - Checked Items</h2>
+        <h2 style="text-align: center;">Chuck's Comic Book Lists - comics to buy this week</h2>
         <p style="text-align: center; color: #555; font-style: italic; margin-bottom: 20px; font-size: 1.1em;">
           Courtesy of ComicList.Info
         </p>        
@@ -247,7 +247,7 @@
       const win = window.open("");
       win.document.write(`
         <html>
-          <head><title>Chuck's Comic Book Lists Checked Items</title></head>
+          <head><title>Chuck's Comic Book Lists - comics to buy this week</title></head>
           <body style="font-family: Arial, sans-serif; padding: 10px; max-width: 800px; margin: 0 auto;">
             ${html}
             <script>window.print();<\/script>
