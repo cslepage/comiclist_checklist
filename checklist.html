@@ -80,7 +80,7 @@
 
     /* Publisher column - wider */
     th:nth-child(2), td:nth-child(2) {
-      width: 350px;
+      width: 400px;
       white-space: nowrap;
     }
 
@@ -230,10 +230,10 @@
       if (checked.length === 0) return alert("No items checked.");
 
       let html = `
+        <h2 style="text-align: center;">Chuck's Comic Book Lists - Checked Items</h2>
         <p style="text-align: center; color: #555; font-style: italic; margin-bottom: 30px; font-size: 1.1em;">
           Courtesy of ComicList.Info
-        </p>
-        <h2 style="text-align: center;">Chuck's Comic Book Lists - Checked Items</h2>
+        </p>        
         <ul>
       `;
 
@@ -248,7 +248,7 @@
       win.document.write(`
         <html>
           <head><title>Chuck's Comic Book Lists Checked Items</title></head>
-          <body style="font-family: Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto;">
+          <body style="font-family: Arial, sans-serif; padding: 10px; max-width: 800px; margin: 0 auto;">
             ${html}
             <script>window.print();<\/script>
           </body>
