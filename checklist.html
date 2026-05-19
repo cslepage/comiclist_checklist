@@ -209,7 +209,7 @@
       const checked = Array.from(document.querySelectorAll("tr.checked"));
       if (checked.length === 0) return alert("No items checked.");
 
-      let html = "<h2>ComicList - Checked Items</h2><ul>";
+      let html = "<h2>Chuck's Comic Book Lists - Checked Items</h2><ul>";
       checked.forEach(row => {
         const tds = row.querySelectorAll("td");
         html += `<li>☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})</li>`;
