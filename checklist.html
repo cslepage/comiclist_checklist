@@ -34,47 +34,54 @@
   <script>
     const CSV_URL = "https://cslepage.github.io/comiclist_checklist/checklist.csv";
 
-    async function loadChecklist() {
-      try {
-        const response = await fetch(CSV_URL);
-        if (!response.ok) throw new Error("Failed to fetch CSV");
+  async function loadChecklist() {
+  try {
+    const response = await fetch(CSV_URL + '?t=' + Date.now()); // bust cache
+    if (!response.ok) throw new Error("Failed to fetch CSV");
 
-        const csvText = await response.text();
-        const rows = csvText.split('\n').map(row => row.split('|').map(cell => cell.trim()));
+    const csvText = await response.text();
+    const lines = csvText.split('\n').map(line => line.trim()).filter(line => line);
+    
+    const tbody = document.querySelector("#checklistTable tbody");
+    tbody.innerHTML = "";
 
-        const tbody = document.querySelector("#checklistTable tbody");
-        tbody.innerHTML = "";
-
-        // Start from index 2 (skip header + separator line)
-        for (let i = 2; i < rows.length; i++) {
-          const cols = rows[i];
-          if (cols.length < 5 || !cols[0] || !cols[1]) continue;
-
-          const [publisher, title, , , price] = cols;
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><input type="checkbox" class="item-check"></td>
-            <td>${publisher}</td>
-            <td>${title}</td>
-            <td>${price}</td>
-          `;
-
-          const checkbox = tr.querySelector("input");
-          checkbox.addEventListener("change", () => {
-            tr.classList.toggle("checked", checkbox.checked);
-          });
-
-          tbody.appendChild(tr);
-        }
-
-        console.log("✅ Checklist loaded successfully!");
-
-      } catch (err) {
-        console.error(err);
-        document.body.innerHTML += `<p style="color:red;">Error loading data. Try opening this file in a local server or upload it online.</p>`;
+    // Skip first two lines (header + separator)
+    for (let i = 2; i < lines.length; i++) {
+      let cols;
+      if (lines[i].includes('|')) {
+        cols = lines[i].split('|').map(cell => cell.trim());
+      } else {
+        cols = lines[i].split(',').map(cell => cell.trim());
       }
+      
+      if (cols.length < 5 || !cols[0] || !cols[1]) continue;
+
+      const publisher = cols[0];
+      const title = cols[1];
+      const price = cols[4] || cols[cols.length-1];
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input type="checkbox" class="item-check"></td>
+        <td>${publisher}</td>
+        <td>${title}</td>
+        <td>${price}</td>
+      `;
+
+      const checkbox = tr.querySelector("input");
+      checkbox.addEventListener("change", () => {
+        tr.classList.toggle("checked", checkbox.checked);
+      });
+
+      tbody.appendChild(tr);
     }
+
+    console.log(`✅ Loaded ${tbody.children.length} items`);
+  } catch (err) {
+    console.error(err);
+    document.body.innerHTML += `<p style="color:red;">Error: ${err.message}. Make sure the CSV is in the same repo and try a local server (e.g. Python -m http.server).</p>`;
+  }
+}
 
     function resetAll() {
       document.querySelectorAll(".item-check").forEach(cb => {
