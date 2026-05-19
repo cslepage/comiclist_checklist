@@ -16,33 +16,33 @@
       background: #f9f9f9;
     }
 
-    /* Sticky Header */
+    /* FIXED Top Header */
     .header {
-      position: sticky;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       background: #f9f9f9;
       z-index: 1000;
-      padding: 15px 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 12px 20px 10px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       border-bottom: 1px solid #ddd;
     }
 
     h1 {
-      margin: 0 0 12px 0;
+      margin: 0 0 10px 0;
       text-align: center;
       color: #333;
+      font-size: 1.6em;
     }
 
     .controls {
       text-align: center;
-      margin: 0;
     }
 
     button {
-      padding: 10px 16px;
-      margin: 0 8px;
+      padding: 9px 16px;
+      margin: 0 6px;
       font-size: 14px;
       cursor: pointer;
       background: #007bff;
@@ -54,10 +54,12 @@
       background: #0056b3;
     }
 
-    /* Main content area */
+    /* Push content down so it doesn't hide under fixed header */
     .main-content {
-      padding: 20px;
-      padding-top: 10px;
+      padding-top: 125px;   /* Adjust if you change header size */
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 40px;
     }
 
     table {
@@ -75,7 +77,7 @@
       background: #007bff;
       color: white;
       position: sticky;
-      top: 118px; /* Adjust if you change header height */
+      top: 118px;           /* Matches header height */
       z-index: 900;
     }
     tr:hover {
@@ -97,17 +99,18 @@
       text-align: center;
       margin: 15px 0;
       font-weight: bold;
+      font-size: 1.1em;
     }
   </style>
 </head>
 <body>
-  <!-- Sticky Top Section -->
+  <!-- Fixed Top Header -->
   <div class="header">
     <h1>ComicList - This Week's Checklist</h1>
     
     <div class="controls">
-      <button onclick="resetAll()">Reset All Checkboxes</button>
-      <button onclick="printChecked()">Print Checked Items</button>
+      <button onclick="resetAll()">Reset All</button>
+      <button onclick="printChecked()">Print Checked</button>
       <button onclick="loadChecklist()">Reload List</button>
     </div>
   </div>
@@ -137,10 +140,7 @@
       
       try {
         const response = await fetch(CSV_URL + "?t=" + Date.now());
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const csvText = await response.text();
         const lines = csvText.trim().split('\n');
@@ -162,17 +162,15 @@
             else if (char === ',' && !inQuotes) {
               cols.push(current.trim());
               current = "";
-            } else {
-              current += char;
-            }
+            } else current += char;
           }
           cols.push(current.trim());
 
-          if (cols.length < 5 || !cols[0] || !cols[1]) continue;
+          if (cols.length < 2 || !cols[0] || !cols[1]) continue;
 
           const publisher = cols[0];
           const title = cols[1];
-          const price = cols[4] || "—";
+          const price = cols.length > 4 ? cols[4] : "—";
 
           const tr = document.createElement("tr");
           tr.innerHTML = `
@@ -183,9 +181,7 @@
           `;
 
           const checkbox = tr.querySelector("input");
-          checkbox.addEventListener("change", () => {
-            tr.classList.toggle("checked", checkbox.checked);
-          });
+          checkbox.addEventListener("change", () => tr.classList.toggle("checked", checkbox.checked));
 
           tbody.appendChild(tr);
         }
@@ -193,18 +189,13 @@
         statusEl.innerHTML = `✅ <strong>${tbody.children.length}</strong> items loaded`;
 
       } catch (err) {
-        console.error(err);
-        statusEl.innerHTML = `❌ Error loading CSV: ${err.message}<br><small>Try Ctrl+Shift+R or check that checklist.csv exists.</small>`;
+        statusEl.innerHTML = `❌ Error: ${err.message}<br><small>Hard refresh (Ctrl+Shift+R) and try again.</small>`;
       }
     }
 
     function escapeHtml(unsafe) {
-      return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                   .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
     function resetAll() {
@@ -215,28 +206,21 @@
     }
 
     function printChecked() {
-      const checkedRows = Array.from(document.querySelectorAll("tr.checked"));
-      if (checkedRows.length === 0) {
-        alert("No items are checked yet.");
-        return;
-      }
+      const checked = Array.from(document.querySelectorAll("tr.checked"));
+      if (checked.length === 0) return alert("No items checked.");
 
-      let printContent = "<h2>ComicList - Checked Items</h2><ul>";
-      checkedRows.forEach(row => {
+      let html = "<h2>ComicList - Checked Items</h2><ul>";
+      checked.forEach(row => {
         const tds = row.querySelectorAll("td");
-        printContent += `<li>☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})</li>`;
+        html += `<li>☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})</li>`;
       });
-      printContent += "</ul>";
+      html += "</ul>";
 
-      const printWindow = window.open("", "_blank");
-      printWindow.document.write(`
-        <html><head><title>ComicList Checked Items</title></head>
-        <body>${printContent}<script>window.print();<\/script></body></html>
-      `);
-      printWindow.document.close();
+      const win = window.open("");
+      win.document.write(`<html><head><title>Checked Comics</title></head><body>${html}<script>window.print();<\/script></body></html>`);
+      win.document.close();
     }
 
-    // Auto-load
     window.onload = loadChecklist;
   </script>
 </body>
