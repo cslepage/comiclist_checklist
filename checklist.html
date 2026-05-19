@@ -2,22 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ComicList - This Week's Checklist</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-    th { background: #f0f0f0; }
-    input[type="checkbox"] { transform: scale(1.4); margin-right: 8px; }
-    .checked td:not(:first-child) { text-decoration: line-through; color: #666; }
-    button { padding: 8px 12px; margin: 5px; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .controls {
+      text-align: center;
+      margin: 15px 0;
+    }
+    button {
+      padding: 10px 16px;
+      margin: 0 8px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    tr:hover {
+      background: #f5f5f5;
+    }
+    input[type="checkbox"] {
+      transform: scale(1.5);
+      margin-right: 8px;
+    }
+    .checked td:not(:first-child) {
+      text-decoration: line-through;
+      color: #666;
+    }
+    .price {
+      text-align: right;
+      font-weight: bold;
+    }
+    .status {
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-
   <h1>ComicList - This Week's Checklist</h1>
-  <button onclick="resetAll()">Reset All Checkboxes</button>
-  <button onclick="printChecked()">Print Checked Items</button>
+  
+  <div class="controls">
+    <button onclick="resetAll()">Reset All Checkboxes</button>
+    <button onclick="printChecked()">Print Checked Items</button>
+    <button onclick="loadChecklist()">Reload List</button>
+  </div>
+
+  <div id="status" class="status">Loading checklist...</div>
 
   <table id="checklistTable">
     <thead>
@@ -25,7 +85,7 @@
         <th>✓</th>
         <th>Publisher</th>
         <th>Title</th>
-        <th>Price</th>
+        <th class="price">Price</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -34,54 +94,87 @@
   <script>
     const CSV_URL = "https://cslepage.github.io/comiclist_checklist/checklist.csv";
 
-  async function loadChecklist() {
-  try {
-    const response = await fetch(CSV_URL + '?t=' + Date.now()); // bust cache
-    if (!response.ok) throw new Error("Failed to fetch CSV");
-
-    const csvText = await response.text();
-    const lines = csvText.split('\n').map(line => line.trim()).filter(line => line);
-    
-    const tbody = document.querySelector("#checklistTable tbody");
-    tbody.innerHTML = "";
-
-    // Skip first two lines (header + separator)
-    for (let i = 2; i < lines.length; i++) {
-      let cols;
-      if (lines[i].includes('|')) {
-        cols = lines[i].split('|').map(cell => cell.trim());
-      } else {
-        cols = lines[i].split(',').map(cell => cell.trim());
-      }
+    async function loadChecklist() {
+      const statusEl = document.getElementById("status");
+      statusEl.textContent = "Loading checklist...";
       
-      if (cols.length < 5 || !cols[0] || !cols[1]) continue;
+      try {
+        // Cache-busting
+        const response = await fetch(CSV_URL + "?t=" + Date.now());
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-      const publisher = cols[0];
-      const title = cols[1];
-      const price = cols[4] || cols[cols.length-1];
+        const csvText = await response.text();
+        const lines = csvText.trim().split('\n');
+        
+        const tbody = document.querySelector("#checklistTable tbody");
+        tbody.innerHTML = "";
 
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input type="checkbox" class="item-check"></td>
-        <td>${publisher}</td>
-        <td>${title}</td>
-        <td>${price}</td>
-      `;
+        // Skip the header row
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
 
-      const checkbox = tr.querySelector("input");
-      checkbox.addEventListener("change", () => {
-        tr.classList.toggle("checked", checkbox.checked);
-      });
+          // Parse CSV line (handles commas inside fields if quoted, but current CSV is simple)
+          let cols = [];
+          let current = "";
+          let inQuotes = false;
+          
+          for (let char of line) {
+            if (char === '"' && !inQuotes) {
+              inQuotes = true;
+            } else if (char === '"' && inQuotes) {
+              inQuotes = false;
+            } else if (char === ',' && !inQuotes) {
+              cols.push(current.trim());
+              current = "";
+            } else {
+              current += char;
+            }
+          }
+          cols.push(current.trim());
 
-      tbody.appendChild(tr);
+          if (cols.length < 5 || !cols[0] || !cols[1]) continue;
+
+          const publisher = cols[0];
+          const title = cols[1];
+          const price = cols[4] || "—";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><input type="checkbox" class="item-check"></td>
+            <td>${escapeHtml(publisher)}</td>
+            <td>${escapeHtml(title)}</td>
+            <td class="price">${escapeHtml(price)}</td>
+          `;
+
+          const checkbox = tr.querySelector("input");
+          checkbox.addEventListener("change", () => {
+            tr.classList.toggle("checked", checkbox.checked);
+          });
+
+          tbody.appendChild(tr);
+        }
+
+        statusEl.innerHTML = `✅ <strong>${tbody.children.length}</strong> items loaded`;
+        console.log(`✅ Loaded ${tbody.children.length} comic items`);
+
+      } catch (err) {
+        console.error(err);
+        statusEl.innerHTML = `❌ Error loading CSV: ${err.message}<br><small>Try a hard refresh (Ctrl+Shift+R) or check that checklist.csv exists.</small>`;
+      }
     }
 
-    console.log(`✅ Loaded ${tbody.children.length} items`);
-  } catch (err) {
-    console.error(err);
-    document.body.innerHTML += `<p style="color:red;">Error: ${err.message}. Make sure the CSV is in the same repo and try a local server (e.g. Python -m http.server).</p>`;
-  }
-}
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
     function resetAll() {
       document.querySelectorAll(".item-check").forEach(cb => {
@@ -91,24 +184,34 @@
     }
 
     function printChecked() {
-      const checked = Array.from(document.querySelectorAll("tr.checked"))
-        .map(row => {
-          const tds = row.querySelectorAll("td");
-          return `☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})`;
-        })
-        .join("\n");
-
-      if (checked) {
-        const w = window.open();
-        w.document.write(`<pre>${checked}</pre><script>window.print()<\/script>`);
-      } else {
+      const checkedRows = Array.from(document.querySelectorAll("tr.checked"));
+      
+      if (checkedRows.length === 0) {
         alert("No items are checked yet.");
+        return;
       }
+
+      let printContent = "<h2>ComicList - Checked Items</h2><ul>";
+      
+      checkedRows.forEach(row => {
+        const tds = row.querySelectorAll("td");
+        printContent += `<li>☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})</li>`;
+      });
+      
+      printContent += "</ul>";
+
+      const printWindow = window.open("", "_blank");
+      printWindow.document.write(`
+        <html>
+          <head><title>ComicList Checked Items</title></head>
+          <body>${printContent}<script>window.print();<\/script></body>
+        </html>
+      `);
+      printWindow.document.close();
     }
 
-    // Load data
-    loadChecklist();
+    // Auto-load when page opens
+    window.onload = loadChecklist;
   </script>
-
 </body>
 </html>
