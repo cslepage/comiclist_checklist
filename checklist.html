@@ -3,11 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chuck's Comic Book Lists - This Week's Checklist</title>
+  <title>ComicList - This Week's Checklist</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -16,7 +14,7 @@
       background: #f9f9f9;
     }
 
-    /* FIXED Top Header */
+    /* Fixed Header */
     .header {
       position: fixed;
       top: 0;
@@ -50,13 +48,10 @@
       border: none;
       border-radius: 4px;
     }
-    button:hover {
-      background: #0056b3;
-    }
+    button:hover { background: #0056b3; }
 
-    /* Push content down so it doesn't hide under fixed header */
     .main-content {
-      padding-top: 125px;   /* Adjust if you change header size */
+      padding-top: 125px;
       padding-left: 20px;
       padding-right: 20px;
       padding-bottom: 40px;
@@ -67,34 +62,57 @@
       border-collapse: collapse;
       background: white;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      table-layout: fixed;   /* Important for controlled column widths */
     }
+
     th, td {
       padding: 12px 10px;
       text-align: left;
       border-bottom: 1px solid #ddd;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
+    /* Publisher column - only as wide as needed */
+    th:nth-child(2), td:nth-child(2) {
+      width: 140px;           /* Fixed comfortable width for publishers */
+      max-width: 160px;
+      white-space: nowrap;
+    }
+
+    /* Title column takes the rest of the space */
+    th:nth-child(3), td:nth-child(3) {
+      width: auto;
+    }
+
+    /* Price column */
+    th:nth-child(4), td:nth-child(4) {
+      width: 90px;
+      text-align: right;
+    }
+
     th {
       background: #007bff;
       color: white;
       position: sticky;
-      top: 118px;           /* Matches header height */
+      top: 118px;
       z-index: 900;
     }
-    tr:hover {
-      background: #f5f5f5;
-    }
+
+    tr:hover { background: #f5f5f5; }
+
     input[type="checkbox"] {
       transform: scale(1.5);
       margin-right: 8px;
     }
+
     .checked td:not(:first-child) {
       text-decoration: line-through;
       color: #666;
     }
-    .price {
-      text-align: right;
-      font-weight: bold;
-    }
+
+    .price { font-weight: bold; }
+
     .status {
       text-align: center;
       margin: 15px 0;
@@ -106,7 +124,7 @@
 <body>
   <!-- Fixed Top Header -->
   <div class="header">
-    <h1>Chuck's Comic Book Lists - This Week's Checklist</h1>
+    <h1>ComicList - This Week's Checklist</h1>
     
     <div class="controls">
       <button onclick="resetAll()">Reset All</button>
@@ -189,7 +207,7 @@
         statusEl.innerHTML = `✅ <strong>${tbody.children.length}</strong> items loaded`;
 
       } catch (err) {
-        statusEl.innerHTML = `❌ Error: ${err.message}<br><small>Hard refresh (Ctrl+Shift+R) and try again.</small>`;
+        statusEl.innerHTML = `❌ Error: ${err.message}<br><small>Hard refresh (Ctrl+Shift+R)</small>`;
       }
     }
 
@@ -209,7 +227,7 @@
       const checked = Array.from(document.querySelectorAll("tr.checked"));
       if (checked.length === 0) return alert("No items checked.");
 
-      let html = "<h2>Chuck's Comic Book Lists - Checked Items</h2><ul>";
+      let html = "<h2>ComicList - Checked Items</h2><ul>";
       checked.forEach(row => {
         const tds = row.querySelectorAll("td");
         html += `<li>☑ ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})</li>`;
