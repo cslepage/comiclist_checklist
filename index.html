@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chuck's Comic Book Lists - This Week's Checklist</title>
+  <title>Chuck's Comic Lists - This Week's Checklist</title>
   <style>
     * { box-sizing: border-box; }
     
@@ -126,7 +126,7 @@
 </head>
 <body>
   <div class="header">
-    <h1><a href="https://comiclist.info/">Chuck's Comic Book Lists</a> - This Week's Checklist</h1>
+    <h1><a href="https://comiclist.info/">Chuck's Comic Lists</a> - This Week's Checklist</h1>
     
     <div class="controls">
       <button onclick="resetAll()">Reset All</button>
@@ -230,7 +230,7 @@
       if (checked.length === 0) return alert("No items checked.");
 
       let html = `
-        <h2 style="text-align: center;">Chuck's Comic Book Lists - comics to buy this week</h2>
+        <h2 style="text-align: center;">Chuck's Comic Lists - comics to buy this week</h2>
         <p style="text-align: center; color: #555; font-style: italic; margin-bottom: 20px; font-size: 1.1em;">
           Courtesy of ComicList.Info
         </p>        
@@ -247,7 +247,7 @@
       const win = window.open("");
       win.document.write(`
         <html>
-          <head><title>Chuck's Comic Book Lists - comics to buy this week</title></head>
+          <head><title>Chuck's Comic Lists - comics to buy this week</title></head>
           <body style="font-family: Arial, sans-serif; padding: 10px; max-width: 800px; margin: 0 auto;">
             ${html}
             <script>window.print();<\/script>
