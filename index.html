@@ -245,8 +245,8 @@
       const checked = Array.from(document.querySelectorAll("tr.checked"));
       if (checked.length === 0) return alert("No items checked.");
 
-      let html = `<h2 style="text-align:center;">Chuck's Comic Lists - comics to buy this week</h2>
-                  <p style="text-align:center;color:#555;font-style:italic;">Courtesy of ComicList.Info</p><ul>`;
+      let html = `<h2 style="text-align:center;">Comic books to buy this week</h2>
+                  <p style="text-align:center;color:#555;font-style:italic;">Courtesy of ComicList.Info (Chuck's Comic Lists)</p><ul>`;
 
       checked.forEach(row => {
         const tds = row.querySelectorAll("td");
