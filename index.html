@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Chuck's Comic Lists - This Week's Checklist</title>
   <style>
     * { box-sizing: border-box; }
     
     body {
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
       margin: 0;
       padding: 0;
       background: #f9f9f9;
+      line-height: 1.4;
     }
 
     .header {
@@ -21,39 +22,43 @@
       right: 0;
       background: #f9f9f9;
       z-index: 1000;
-      padding: 12px 20px 10px 20px;
+      padding: 10px 16px 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       border-bottom: 1px solid #ddd;
     }
 
     h1 {
-      margin: 0 0 10px 0;
+      margin: 0 0 8px 0;
       text-align: center;
       color: #333;
-      font-size: 1.6em;
+      font-size: 1.35em;
     }
 
     .controls {
       text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     button {
-      padding: 9px 16px;
-      margin: 0 6px;
-      font-size: 14px;
+      padding: 10px 14px;
+      font-size: 15px;
       cursor: pointer;
       background: #007bff;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
+      min-height: 44px; /* Better touch target */
     }
     button:hover { background: #0056b3; }
 
     .main-content {
-      padding-top: 125px;
-      padding-left: 20px;
-      padding-right: 20px;
-      padding-bottom: 40px;
+      padding-top: 110px;
+      padding-left: 12px;
+      padding-right: 12px;
+      padding-bottom: 60px;
     }
 
     table {
@@ -67,51 +72,33 @@
     th, td {
       padding: 12px 8px;
       text-align: left;
-      border-bottom: 1px solid #ddd;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
     }
 
-    /* Checkbox column - much narrower */
-    th:nth-child(1), td:nth-child(1) {
-      width: 50px;
-      text-align: center;
-    }
-
-    /* Publisher column - wider */
-    th:nth-child(2), td:nth-child(2) {
-      width: 400px;
-      white-space: nowrap;
-    }
-
-    /* Title column takes remaining space */
-    th:nth-child(3), td:nth-child(3) {
-      width: auto;
-    }
-
-    /* Price column */
-    th:nth-child(4), td:nth-child(4) {
-      width: 100px;
-      text-align: right;
-    }
+    th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
+    th:nth-child(2), td:nth-child(2) { width: 28%; }
+    th:nth-child(3), td:nth-child(3) { width: auto; }
+    th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
 
     th {
       background: #007bff;
       color: white;
       position: sticky;
-      top: 118px;
+      top: 98px;
       z-index: 900;
+      font-size: 0.95em;
     }
 
-    tr:hover { background: #f5f5f5; }
-
-    input[type="checkbox"] {
-      transform: scale(1.5);
-    }
-
-    .checked td:not(:first-child) {
+    tr:hover { background: #f8f9fa; }
+    tr.checked td:not(:first-child) {
       text-decoration: line-through;
       color: #666;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.8);
+      margin: 0;
     }
 
     .price { font-weight: bold; }
@@ -122,22 +109,28 @@
       font-weight: bold;
       font-size: 1.1em;
     }
+
+    /* Mobile-friendly improvements */
+    @media (max-width: 600px) {
+      th, td { padding: 10px 6px; font-size: 15px; }
+      h1 { font-size: 1.25em; }
+      .main-content { padding-top: 105px; padding-left: 8px; padding-right: 8px; }
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1><a href="https://comiclist.info/">Chuck's Comic Lists</a> - This Week's Checklist</h1>
+    <h1><a href="https://comiclist.info/" style="text-decoration:none;color:inherit;">Chuck's Comic Lists</a> - This Week's Checklist</h1>
     
     <div class="controls">
       <button onclick="resetAll()">Reset All</button>
       <button onclick="printChecked()">Print Checked</button>
-      <button onclick="loadChecklist()">Reload List</button>
+      <button onclick="loadChecklist()">Reload</button>
     </div>
   </div>
 
   <div class="main-content">
     <div id="status" class="status">Loading checklist...</div>
-
     <table id="checklistTable">
       <thead>
         <tr>
@@ -157,14 +150,13 @@
     async function loadChecklist() {
       const statusEl = document.getElementById("status");
       statusEl.textContent = "Loading checklist...";
-      
+
       try {
         const response = await fetch(CSV_URL + "?t=" + Date.now());
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const csvText = await response.text();
         const lines = csvText.trim().split('\n');
-        
         const tbody = document.querySelector("#checklistTable tbody");
         tbody.innerHTML = "";
 
@@ -172,20 +164,8 @@
           const line = lines[i].trim();
           if (!line) continue;
 
-          let cols = [];
-          let current = "";
-          let inQuotes = false;
-          
-          for (let char of line) {
-            if (char === '"' && !inQuotes) inQuotes = true;
-            else if (char === '"' && inQuotes) inQuotes = false;
-            else if (char === ',' && !inQuotes) {
-              cols.push(current.trim());
-              current = "";
-            } else current += char;
-          }
-          cols.push(current.trim());
-
+          // Better CSV parser
+          const cols = parseCSVLine(line);
           if (cols.length < 2 || !cols[0] || !cols[1]) continue;
 
           const publisher = cols[0];
@@ -201,7 +181,9 @@
           `;
 
           const checkbox = tr.querySelector("input");
-          checkbox.addEventListener("change", () => tr.classList.toggle("checked", checkbox.checked));
+          checkbox.addEventListener("change", () => {
+            tr.classList.toggle("checked", checkbox.checked);
+          });
 
           tbody.appendChild(tr);
         }
@@ -209,55 +191,22 @@
         statusEl.innerHTML = `✅ <strong>${tbody.children.length}</strong> items loaded`;
 
       } catch (err) {
-        statusEl.innerHTML = `❌ Error: ${err.message}<br><small>Hard refresh (Ctrl+Shift+R)</small>`;
+        statusEl.innerHTML = `❌ Error loading list<br><small>Try refreshing the page</small>`;
+        console.error(err);
       }
     }
 
-    function escapeHtml(unsafe) {
-      return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                   .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
+    // Improved CSV line parser
+    function parseCSVLine(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
 
-    function resetAll() {
-      document.querySelectorAll(".item-check").forEach(cb => {
-        cb.checked = false;
-        cb.closest("tr").classList.remove("checked");
-      });
-    }
-
-    function printChecked() {
-      const checked = Array.from(document.querySelectorAll("tr.checked"));
-      if (checked.length === 0) return alert("No items checked.");
-
-      let html = `
-        <h2 style="text-align: center;">Chuck's Comic Lists - comics to buy this week</h2>
-        <p style="text-align: center; color: #555; font-style: italic; margin-bottom: 20px; font-size: 1.1em;">
-          Courtesy of ComicList.Info
-        </p>        
-        <ul>
-      `;
-
-      checked.forEach(row => {
-        const tds = row.querySelectorAll("td");
-        html += `<li> ${tds[1].textContent} — ${tds[2].textContent} (${tds[3].textContent})</li>`;
-      });
-
-      html += `</ul>`;
-
-      const win = window.open("");
-      win.document.write(`
-        <html>
-          <head><title>Chuck's Comic Lists - comics to buy this week</title></head>
-          <body style="font-family: Arial, sans-serif; padding: 10px; max-width: 800px; margin: 0 auto;">
-            ${html}
-            <script>window.print();<\/script>
-          </body>
-        </html>
-      `);
-      win.document.close();
-    }
-
-    window.onload = loadChecklist;
-  </script>
-</body>
-</html>
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"' && !inQuotes) {
+          inQuotes = true;
+        } else if (char === '"' && inQuotes) {
+          inQuotes = false;
+        } else if (char === ',' && !inQuotes) {
+          result...
