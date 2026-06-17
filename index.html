@@ -116,6 +116,42 @@
       h1 { font-size: 1.25em; }
       .main-content { padding-top: 105px; padding-left: 8px; padding-right: 8px; }
     }
+
+
+
+    
+
+  /* Make the table scrollable on mobile */
+  .markdown-body table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Optional: Better column sizing */
+  table th:nth-child(2), table td:nth-child(2) {  /* Publisher column */
+    min-width: 110px;
+  }
+
+  table th:nth-child(3), table td:nth-child(3) {  /* Title column */
+    min-width: 280px;
+  }
+
+  /* Make text smaller on very small screens */
+  @media (max-width: 480px) {
+    table {
+      font-size: 0.95rem;
+    }
+    table th, table td {
+      padding: 6px 4px;
+    }
+  }
+
+
+    
+
     
   </style>
 </head>
