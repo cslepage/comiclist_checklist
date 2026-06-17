@@ -69,33 +69,27 @@
 
 /* ====================== TABLE WRAPPER ====================== */
 .table-wrapper {
-  max-height: calc(100vh - 280px);   /* Adjust this value as needed */
+  max-height: calc(100vh - 280px);
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
   background: white;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 10px;
 }
 
-/* Make sure the table fills the wrapper */
 .table-wrapper table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  margin: 0;
 }
 
-/* Sticky Header */
 th {
-  background: #007bff;
-  color: white;
   position: sticky;
   top: 0;
   z-index: 10;
-  padding: 14px 8px;
-  font-size: 0.95em;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.15);   /* nice separation */
-  text-align: left;
+  background: #007bff;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
 }
 
 /* Column widths */
@@ -260,6 +254,7 @@ body {
 
 <div class="main-content">
 
+ 
   <div class="table-wrapper">
     <table id="checklistTable">
       <thead>
