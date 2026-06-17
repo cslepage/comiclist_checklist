@@ -91,34 +91,36 @@
 
    
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      table-layout: fixed;
-    }
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  table-layout: fixed;
+}
 
-    th, td {
-      padding: 12px 8px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-      vertical-align: middle;
-    }
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
 
-    th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
-    th:nth-child(2), td:nth-child(2) { width: 28%; }
-    th:nth-child(3), td:nth-child(3) { width: auto; }
-    th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
+th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
+th:nth-child(2), td:nth-child(2) { width: 28%; }
+th:nth-child(3), td:nth-child(3) { width: auto; }
+th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
 
-    th {
-      background: #007bff;
-      color: white;
-      position: sticky;
-      top: 98px;
-      z-index: 900;
-      font-size: 0.95em;
-    }
+th {
+  background: #007bff;
+  color: white;
+  position: sticky;
+  z-index: 900;
+  font-size: 0.95em;
+  top: 0;                    /* Will be controlled by JS or media queries */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);   /* Nice shadow when stuck */
+}
 
     tr:hover { background: #f8f9fa; }
     tr.checked td:not(:first-child) {
