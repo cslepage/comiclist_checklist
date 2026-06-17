@@ -117,7 +117,30 @@
       .main-content { padding-top: 105px; padding-left: 8px; padding-right: 8px; }
     }
 
+.status {
+  text-align: center;
+  margin: 12px 0 15px 0;
+  font-weight: bold;
+  font-size: 1.1em;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 8px 12px;
+  border-radius: 6px;
+  position: relative;
+  z-index: 10;
+}
 
+/* Extra breathing room under the fixed header on mobile */
+@media (max-width: 600px) {
+  .main-content {
+    padding-top: 125px;   /* Increased from 105px */
+  }
+  
+  .status {
+    margin-top: 8px;
+    padding: 10px 12px;
+  }
+}
 
     
   </style>
