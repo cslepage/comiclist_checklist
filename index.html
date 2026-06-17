@@ -120,39 +120,6 @@
 
 
     
-
-  /* Make the table scrollable on mobile */
-  .markdown-body table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Optional: Better column sizing */
-  table th:nth-child(2), table td:nth-child(2) {  /* Publisher column */
-    min-width: 110px;
-  }
-
-  table th:nth-child(3), table td:nth-child(3) {  /* Title column */
-    min-width: 280px;
-  }
-
-  /* Make text smaller on very small screens */
-  @media (max-width: 480px) {
-    table {
-      font-size: 0.95rem;
-    }
-    table th, table td {
-      padding: 6px 4px;
-    }
-  }
-
-
-    
-
-    
   </style>
 </head>
 <body>
@@ -163,10 +130,9 @@
   
   <div class="header">
    
-    <h1><a href="https://comiclist.info/" style="text-decoration:none;color:inherit;">Chuck's Comic Lists</a> - This Week's Checklist</h1>
+    <h1><a href="https://comiclist.info/" style="text-decoration:none;color:inherit;"><img src="https://comiclist.info/uploads/2026/avatar2.png" width="50" height="50" alt="Chuck's Comic Lists"></a><a href="https://comiclist.info/" style="text-decoration:none;color:inherit;">Chuck's Comic Lists</a> - This Week's Checklist</h1>
     
     <div class="controls">
-       <a href="https://comiclist.info/" style="text-decoration:none;color:inherit;"><img src="https://comiclist.info/uploads/2026/avatar2.png" width="50" height="50" alt="Chuck's Comic Lists"></a>
       <button onclick="resetAll()">Reset All</button>
       <button onclick="printChecked()">Print Checked</button>
       <button onclick="loadChecklist()">Reload</button>
