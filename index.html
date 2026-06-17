@@ -192,6 +192,46 @@ tr:hover {
   }
 }
     
+/* ==================== RESPONSIVE FONT SIZES ==================== */
+
+/* Base font size for the whole page */
+body {
+  font-size: 16px;          /* Default for desktops */
+}
+
+/* Small phones - Portrait */
+@media (max-width: 600px) and (orientation: portrait) {
+  body { font-size: 15px; }
+  
+  th, td { font-size: 15px; padding: 10px 6px; }
+  h1 { font-size: 1.2em; }
+  .status { font-size: 1.05em; }
+  button { font-size: 14.5px; }
+}
+
+/* Phones in Landscape - Make fonts noticeably smaller */
+@media (max-width: 900px) and (orientation: landscape) {
+  body { font-size: 14px; }
+  
+  th, td { 
+    font-size: 14px; 
+    padding: 9px 5px; 
+  }
+  h1 { font-size: 1.1em; }
+  .status { font-size: 1em; }
+  button { font-size: 14px; }
+  
+  /* Make table a bit more compact */
+  th, td { 
+    line-height: 1.25; 
+  }
+}
+
+/* Tablets */
+@media (min-width: 601px) and (max-width: 1023px) {
+  body { font-size: 15.5px; }
+}
+
     
   </style>
 </head>
