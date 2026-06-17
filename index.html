@@ -15,16 +15,17 @@
       line-height: 1.4;
     }
 
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #f9f9f9;
-      z-index: 1000;
-      padding: 10px 16px 8px;
-      border-bottom: 1px solid #ddd;
-    }
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #f9f9f9;
+  z-index: 1000;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 16px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
     h1 {
       margin: 0 0 8px 0;
@@ -54,17 +55,38 @@
     button:hover { background: #0056b3; }
 
 .main-content {
-  padding-top: 250px;        /* Desktop */
+  padding-top: 20px;           /* Will be overridden by media queries */
   padding-left: 12px;
   padding-right: 12px;
-  padding-bottom: 60px;
+  padding-bottom: 80px;
 }
 
-/* Mobile adjustment */
-@media (max-width: 600px) {
-  .main-content {
-    padding-top: 130px;      /* Keep mobile reasonable */
-  }
+/* ==================== RESPONSIVE PADDING ==================== */
+
+/* Very small phones - portrait */
+@media (max-width: 600px) and (orientation: portrait) {
+  .header { padding: 8px 12px 6px; }
+  .main-content { padding-top: 125px; }
+  th { top: 92px !important; }     /* adjust if needed */
+}
+
+/* Landscape phones & small tablets */
+@media (max-width: 900px) and (orientation: landscape) {
+  .header { padding: 6px 12px 4px; }
+  .main-content { padding-top: 78px; }   /* Much less top padding */
+  th { top: 62px !important; }
+}
+
+/* Tablets & laptops */
+@media (min-width: 601px) {
+  .main-content { padding-top: 210px; }
+  th { top: 148px !important; }
+}
+
+/* Large desktops */
+@media (min-width: 1024px) {
+  .main-content { padding-top: 235px; }
+  th { top: 165px !important; }
 }
 
    
