@@ -55,39 +55,17 @@
     button:hover { background: #0056b3; }
 
 .main-content {
-  padding-top: 20px;           /* Will be overridden by media queries */
+  padding-top: 250px;        /* Desktop */
   padding-left: 12px;
   padding-right: 12px;
-  padding-bottom: 80px;
+  padding-bottom: 60px;
 }
 
-/* ==================== RESPONSIVE PADDING ==================== */
-
-/* Very small phones - portrait */
-@media (max-width: 600px) and (orientation: portrait) {
-  .header { padding: 8px 12px 6px; }
-  .main-content { padding-top: 150px; }
-  th { top: 92px !important; }     /* adjust if needed */
-}
-
-/* Landscape phones & small tablets */
-@media (max-width: 900px) and (orientation: landscape) {
-  .header { padding: 6px 12px 4px; }
-  .main-content { padding-top: 300px; }   /* Much less top padding */
-  th { top: 62px !important; }
-}
-
-/* Tablets & laptops */
-@media (min-width: 601px) {
-  .main-content { padding-top: 300px; }
-  th { top: 148px !important; }
-}
-
-/* Large desktops */
-@media (min-width: 1024px) {
-  .main-content { padding-top: 300px; }
-  th { top: 175px !important; }
-}
+/* Mobile adjustment */
+@media (max-width: 600px) {
+  .main-content {
+    padding-top: 130px;      /* Keep mobile reasonable */
+  }
 
    
 
