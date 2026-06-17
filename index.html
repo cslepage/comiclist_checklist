@@ -387,5 +387,26 @@ body {
 
     window.onload = loadChecklist;
   </script>
+<script>
+// Remove gap by auto-adjusting padding in all orientations
+function removeGap() {
+  const header = document.querySelector('.header');
+  const main = document.querySelector('.main-content');
+  
+  if (header && main) {
+    const headerHeight = header.offsetHeight;
+    main.style.paddingTop = (headerHeight + 12) + 'px';   // 12px = nice small gap
+  }
+}
+
+// Run it when page loads and every time you rotate the phone
+window.addEventListener('load', removeGap);
+window.addEventListener('resize', removeGap);
+window.addEventListener('orientationchange', () => {
+  setTimeout(removeGap, 150);   // small delay after rotation
+});
+</script>
+
+  
 </body>
 </html>
