@@ -67,42 +67,53 @@
   }
 }
 
-   
+/* ====================== TABLE WRAPPER ====================== */
+.table-wrapper {
+  max-height: calc(100vh - 280px);   /* Adjust this value as needed */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      table-layout: fixed;
-    }
+/* Make sure the table fills the wrapper */
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0;
+}
 
-    th, td {
-      padding: 12px 8px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-      vertical-align: middle;
-    }
+/* Sticky Header */
+th {
+  background: #007bff;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 14px 8px;
+  font-size: 0.95em;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);   /* nice separation */
+  text-align: left;
+}
 
-    th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
-    th:nth-child(2), td:nth-child(2) { width: 28%; }
-    th:nth-child(3), td:nth-child(3) { width: auto; }
-    th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
+/* Column widths */
+th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
+th:nth-child(2), td:nth-child(2) { width: 28%; }
+th:nth-child(3), td:nth-child(3) { width: auto; }
+th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
 
-    th {
-      background: #007bff;
-      color: white;
-      position: sticky;
-      top: 98px;
-      z-index: 900;
-      font-size: 0.95em;
-    }
+td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
 
-    tr:hover { background: #f8f9fa; }
-    tr.checked td:not(:first-child) {
-      text-decoration: line-through;
-      color: #666;
-    }
+/* Optional: nicer row hover */
+tr:hover {
+  background: #f8f9fa;
+}
 
     input[type="checkbox"] {
       transform: scale(1.8);
@@ -207,8 +218,10 @@
   
   </div>
 
-  <div class="main-content">
-    <div id="status" class="status">Loading checklist...</div>
+<div class="main-content">
+  <div id="status" class="status">Loading checklist...</div>
+  
+  <div class="table-wrapper">
     <table id="checklistTable">
       <thead>
         <tr>
@@ -221,6 +234,7 @@
       <tbody></tbody>
     </table>
   </div>
+</div>
 
  <script>
     const CSV_URL = "checklist.csv";   // Change this if your file is in a subfolder
