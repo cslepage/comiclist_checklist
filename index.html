@@ -15,17 +15,16 @@
       line-height: 1.4;
     }
 
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: #f9f9f9;
-  z-index: 1000;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 16px 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #f9f9f9;
+      z-index: 1000;
+      padding: 10px 16px 8px;
+      border-bottom: 1px solid #ddd;
+    }
 
     h1 {
       margin: 0 0 8px 0;
@@ -66,39 +65,38 @@
   .main-content {
     padding-top: 130px;      /* Keep mobile reasonable */
   }
+}
 
    
 
-/* Table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  table-layout: fixed;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      table-layout: fixed;
+    }
 
-th, td {
-  padding: 12px 8px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-  vertical-align: middle;
-}
+    th, td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
 
-th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
-th:nth-child(2), td:nth-child(2) { width: 28%; }
-th:nth-child(3), td:nth-child(3) { width: auto; }
-th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
+    th:nth-child(1), td:nth-child(1) { width: 52px; text-align: center; }
+    th:nth-child(2), td:nth-child(2) { width: 28%; }
+    th:nth-child(3), td:nth-child(3) { width: auto; }
+    th:nth-child(4), td:nth-child(4) { width: 85px; text-align: right; }
 
-th {
-  background: #007bff;
-  color: white;
-  position: sticky;
-  z-index: 900;
-  font-size: 0.95em;
-  top: 0;                    /* Will be controlled by JS or media queries */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);   /* Nice shadow when stuck */
-}
+    th {
+      background: #007bff;
+      color: white;
+      position: sticky;
+      top: 98px;
+      z-index: 900;
+      font-size: 0.95em;
+    }
 
     tr:hover { background: #f8f9fa; }
     tr.checked td:not(:first-child) {
